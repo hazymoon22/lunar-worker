@@ -33,7 +33,7 @@ type Reminder struct {
 func GetRemindersFromToday(ctx context.Context, db DBTX) ([]Reminder, error) {
 	today := time.Now().UTC()
 	lunarToday := calendar.NewLunarFromDate(today)
-	lunarTodayDate := lunar.LunarToDate(*lunarToday).Format("2026-06-06")
+	lunarTodayDate := lunar.LunarToDate(*lunarToday).Format(time.DateOnly)
 
 	afterOrEqualToday := psql.Quote("next_alert_date").GTE(psql.Arg(lunarTodayDate))
 
@@ -66,7 +66,7 @@ func GetRemindersFromToday(ctx context.Context, db DBTX) ([]Reminder, error) {
 func GetRepeatableReminders(ctx context.Context, db DBTX) ([]Reminder, error) {
 	today := time.Now().UTC()
 	lunarToday := calendar.NewLunarFromDate(today)
-	lunarTodayDate := lunar.LunarToDate(*lunarToday).Format("2026-06-06")
+	lunarTodayDate := lunar.LunarToDate(*lunarToday).Format(time.DateOnly)
 	beforeToday := psql.Quote("next_alert_date").LT(psql.Arg(lunarTodayDate))
 	repeatYearly := psql.Quote("repeat").EQ(psql.Arg(RepeatModeYearly))
 	repeatMonthly := psql.Quote("repeat").EQ(psql.Arg(RepeatModeMonthly))
