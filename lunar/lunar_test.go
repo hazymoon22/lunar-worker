@@ -60,3 +60,12 @@ func TestGetLunarNextMonth(t *testing.T) {
 	assert.Equal(t, 3, got.GetMonth())
 	assert.Equal(t, 1, got.GetDay())
 }
+
+func TestLunarToDateNormalizesLeapMonth(t *testing.T) {
+	leapMonth := calendar.NewLunarFromYmd(2025, -6, 1)
+	require.NotNil(t, leapMonth)
+
+	got := LunarToDate(*leapMonth)
+
+	assert.Equal(t, time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC), got)
+}

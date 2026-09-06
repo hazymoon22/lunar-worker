@@ -11,7 +11,23 @@ import (
 
 func checkAlertDateEligible(alertDate time.Time, alertBefore *int32) bool {
 	now := time.Now().UTC()
-	alertFrom := alertDate
+
+	lunarAlertFrom := calendar.NewLunarFromYmd(
+		alertDate.Year(),
+		int(alertDate.Month()),
+		alertDate.Day(),
+	)
+	if lunarAlertFrom == nil {
+		return false
+	}
+
+	solarAlertFrom := lunarAlertFrom.GetSolar()
+	if solarAlertFrom == nil {
+		return false
+	}
+
+	alertFrom := lunar.SolarToDate(*solarAlertFrom)
+
 	if alertBefore != nil {
 		alertFrom = alertFrom.AddDate(0, 0, -int(*alertBefore))
 	}
