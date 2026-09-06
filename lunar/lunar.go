@@ -47,5 +47,10 @@ func SolarToDate(solar calendar.Solar) time.Time {
 }
 
 func LunarToDate(lunar calendar.Lunar) time.Time {
-	return time.Date(lunar.GetYear(), time.Month(lunar.GetMonth()), lunar.GetDay(), 0, 0, 0, 0, time.UTC)
+	month := lunar.GetMonth()
+	if month < 0 {
+		month = -month
+	}
+
+	return time.Date(lunar.GetYear(), time.Month(month), lunar.GetDay(), 0, 0, 0, 0, time.UTC)
 }

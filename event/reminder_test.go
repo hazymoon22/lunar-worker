@@ -12,10 +12,16 @@ import (
 )
 
 func TestCheckAlertDateEligibleWithoutAlertBefore(t *testing.T) {
-	past := time.Now().Add(-1 * time.Hour)
+	pastSolar := time.Now().UTC().Add(-24 * time.Hour)
+	pastLunar := calendar.NewLunarFromDate(pastSolar)
+	require.NotNil(t, pastLunar)
+	past := lunar.LunarToDate(*pastLunar)
 	assert.True(t, checkAlertDateEligible(past, nil))
 
-	future := time.Now().Add(1 * time.Hour)
+	futureSolar := time.Now().UTC().Add(24 * time.Hour)
+	futureLunar := calendar.NewLunarFromDate(futureSolar)
+	require.NotNil(t, futureLunar)
+	future := lunar.LunarToDate(*futureLunar)
 	assert.False(t, checkAlertDateEligible(future, nil))
 }
 
@@ -23,11 +29,17 @@ func TestCheckAlertDateEligibleWithAlertBefore(t *testing.T) {
 	alertBefore := int32(2)
 
 	// alertFrom is in the future (72h - 2 days = +24h from now)
-	alertDateFuture := time.Now().Add(72 * time.Hour)
+	alertDateFutureSolar := time.Now().UTC().Add(72 * time.Hour)
+	alertDateFutureLunar := calendar.NewLunarFromDate(alertDateFutureSolar)
+	require.NotNil(t, alertDateFutureLunar)
+	alertDateFuture := lunar.LunarToDate(*alertDateFutureLunar)
 	assert.False(t, checkAlertDateEligible(alertDateFuture, &alertBefore))
 
 	// alertFrom is in the past
-	alertDateEligible := time.Now().Add(1 * time.Hour)
+	alertDateEligibleSolar := time.Now().UTC().Add(1 * time.Hour)
+	alertDateEligibleLunar := calendar.NewLunarFromDate(alertDateEligibleSolar)
+	require.NotNil(t, alertDateEligibleLunar)
+	alertDateEligible := lunar.LunarToDate(*alertDateEligibleLunar)
 	assert.True(t, checkAlertDateEligible(alertDateEligible, &alertBefore))
 }
 
